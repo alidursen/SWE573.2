@@ -2,30 +2,35 @@ package com.swe573.twitree.controller;
 
 import com.swe573.twitree.InitializerPackage;
 import com.swe573.twitree.TweetNature;
+import com.swe573.twitree.service.ThreadVisualizerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.twitter.api.TimelineOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import twitter4j.*;
-import twitter4j.api.SearchResource;
-import twitter4j.api.TweetsResources;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
-public class DisplayDeterminer {
+public class IdentificationController {
+    private ThreadVisualizerService visualizer;
+
     private Twitter determiner;
     private Status initializer;
     private int[] POPULARITY_COEFFICIENTS = { 2, 1 };
     private int   POPULARITY_CONSTRAINT = 60;
     private InitializerPackage initPack;
 
+    private Logger logger = Logger.getAnonymousLogger();
+
     @Autowired
-    public DisplayDeterminer() {
-        /**/
+    public IdentificationController(ThreadVisualizerService visualizer) {
+        this.visualizer = visualizer;
+        determiner = (new TwitterFactory()).getInstance();
     }
 
     @GetMapping(value = "/")
@@ -34,7 +39,7 @@ public class DisplayDeterminer {
     }
 
     @GetMapping(path = "/*")
-    public String isThread(final Model model, HttpServletRequest request){
+    public String isThread(final Model model, HttpServletRequest request) {
         initializer = obtainTweetFromInput(request.getQueryString());
 
         if(determineNature(initializer)==TweetNature.THREAD){
@@ -43,6 +48,8 @@ public class DisplayDeterminer {
             initPack = new InitializerPackage(initializer, TweetNature.DISCUSSION, determinePopularity(initializer));
         }
         initPack = new InitializerPackage(initializer, determineNature(initializer), determinePopularity(initializer));
+
+        visualizer.ShowDiscussion(initPack);
 
         //set pop-up to open
         return "home";
@@ -63,42 +70,44 @@ public class DisplayDeterminer {
 
     //read header
     @GetMapping(value = "/header")
-    public String getHeader(final Model model, @ModelAttribute("form") String tweetId){
+    public String getHeader(final Model model, @ModelAttribute("form") String tweetId) {
         initializer = obtainTweetFromInput(tweetId);
         //pop-up
         return "/popup";
     }
 
 
-    private Status obtainTweetFromInput(String s){
-        if(s.contains("/"))
-            s = s.substring( s.lastIndexOf('/') );
+    //I'M BEGRUDGINGLY MAKING METHODS BELOW PUBLIC, BECAUSE APPARENTLY WE CANNOT TEST PROVATE METHODS. (!)
+    public Status obtainTweetFromInput(String s) {
+        if(s.contains("/")){
+            if(s.endsWith("/")) s = s.substring(0,s.length()-1);
+            s = s.substring( s.lastIndexOf('/') +1);
+        }
 
         Status tw = null;
 
         try {
             tw = determiner.showStatus(Long.parseLong(s));
         } catch (NumberFormatException e){
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error at parsing string into long", e);
         } catch (TwitterException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error at getting Tweet", e);
         }
         return tw;
     }
 
-    private boolean determinePopularity(Status tw){
     /**     If the tweet in question is determined to be "popular", then returns true. For our purposes,
      *      popularity means whether they have more than a set number of replies.
      *
      *      Turns out Twitter API releases mention count to Premium and Enterprise tier users, which we are not.
      *      Thus we will instead revert to a combination of retweet and like count.         */
+    public boolean determinePopularity(Status tw){
 
         int tweetPopularity = tw.getRetweetCount()*POPULARITY_COEFFICIENTS[0] +
                 tw.getFavoriteCount()*POPULARITY_COEFFICIENTS[1];
         return tweetPopularity > POPULARITY_CONSTRAINT;
     }
 
-    private TweetNature determineNature(Status tw){
     /**     AN INITIALIZER BELONGS TO A THREAD IF ITS AUTHOR REPLIED TO IT, AND IS A DISCUSSION OTHERWISE.
      *
      *      Since Twitter does not, for one reason or another, supply the user with a list of replies,
@@ -114,9 +123,9 @@ public class DisplayDeterminer {
      *      AND that is also probably why we can't use additional parameters.
      *
      *      METHOD UPDATE: we have access to Search functionalities, which CAN search by author and replyto.    */
-
+    public TweetNature determineNature(Status tw){
         long tweetID = tw.getId();
-        Query q = new Query("from:" + tw.getUser().getName() + " to:" + tw.getUser().getName());
+        Query q = new Query("from:" + tw.getUser().getScreenName() + " to:" + tw.getUser().getScreenName());
         q.setSinceId(tweetID);
         QueryResult queryResult = null;
         List<Status> authorTweets;
@@ -124,7 +133,7 @@ public class DisplayDeterminer {
             try {
                 queryResult = determiner.search(q);
             } catch (TwitterException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "error querying Tweet", e);
             }
             authorTweets = queryResult.getTweets();
             if(authorTweets != null){
