@@ -21,13 +21,14 @@ public class ThreadVisualizerServiceTests {
                 // https://twitter.com/_geyik/status/1072416425229332481
             popularDiscussionInitializer = twitterTester.showStatus(1071804193848074241L);
                 // https://twitter.com/CREWcrew/status/1071804193848074241
-            normalDiscussionInitializer = twitterTester.showStatus(1071381180489089025L);
-                // https://twitter.com/BurakKadercan/status/1071381180489089025
+            normalDiscussionInitializer = twitterTester.showStatus(1077522206303928326L);
+                // https://twitter.com/RealTimeWWII/status/1077522206303928326
 
         } catch (TwitterException e) {
             logger.log(Level.SEVERE, "Error at getting Tweet", e);
         }
     }
+
     Long ShortThreadIds[] = new Long[]{
             1072416425229332481L, 1072416426374426624L, 1072416427842396161L,
             1072416430451253249L, 1072416432183492608L, 1072416433433440258L,
@@ -44,12 +45,20 @@ public class ThreadVisualizerServiceTests {
         Assert.assertArrayEquals(ShortThreadIds, resultIds);
     }
 
-/*
+    Long nDiscussionIds[] = new Long[]{
+            1077536816696303620L, 1077535925519806464L, 1077533204670746625L,
+            1077528194494988288L, 1077524949542338560L, 1077523086428291072L,
+            1077522322427428864L,
+    };
+
     @Test
     public void GetReplies(){
-        QueryResult popular = tester.GetReplies(popularDiscussionInitializer, true);
-        QueryResult unpopular = tester.GetReplies(normalDiscussionInitializer, false);
+        List<Status> unpopular = tester.GetReplies(normalDiscussionInitializer, false);
+        Long ids[] = new Long[unpopular.size()];
+        for (int i = 0; i < ids.length; i++) {
+            ids[i] = unpopular.get(i).getId();
+        }
+        Assert.assertArrayEquals(nDiscussionIds, ids);
     }
-*/
 
 }

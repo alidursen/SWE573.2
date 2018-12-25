@@ -65,24 +65,39 @@ public class ThreadVisualizerService {
         return CHAIN;
     }
 
-    public QueryResult GetReplies(Status tweet, boolean popularity){
+/**     Given a Tweet and a Popularity parameter, returns replies to it as a List object,
+*       as ordered by Twitter Search according to Popularity.
+*/
+    public List<Status> GetReplies(Status tweet, boolean popularity){
         String AuthorName = tweet.getUser().getScreenName();
         Query q = new Query("to:" + AuthorName);
+        QueryResult qr;
+        List<Status> returnee = new ArrayList<Status>();
         q.setSinceId(tweet.getId());
         q.setCount(100);
         if (popularity) q.setResultType(Query.ResultType.popular);
             else q.setResultType(Query.ResultType.recent);
-// TODO: it just fetches replies, not replies to a specific tweet
-        try{
-            return determiner.search(q);
-        } catch (TwitterException e){
-            return null;
-        }
+
+        do {
+            try{
+                qr =  determiner.search(q);
+            } catch (TwitterException e){
+                logger.log(Level.WARNING,"Couldn't query, returning", e);
+                return returnee;
+            }
+            for (Status t: qr.getTweets()) {
+                if(t.getInReplyToStatusId() == tweet.getId()) returnee.add(t);
+            }
+            if(qr.hasNext()) q = qr.nextQuery();
+                else break;
+        } while (true);
+
+        return returnee;
     }
 
-    public void ShowDiscussion(InitializerPackage init){
-        if(init.nature()== TweetNature.THREAD) GetChain(init.initializer());
-
+    public List<Status> ShowDiscussion(InitializerPackage init){
+        if(init.nature()== TweetNature.THREAD) return GetChain(init.initializer());
+        else return GetReplies(init.initializer(), init.popularity());
     }
 
 }
