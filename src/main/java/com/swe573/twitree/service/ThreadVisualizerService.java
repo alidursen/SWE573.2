@@ -72,7 +72,7 @@ public class ThreadVisualizerService {
         q.setCount(100);
         if (popularity) q.setResultType(Query.ResultType.popular);
             else q.setResultType(Query.ResultType.recent);
-
+// TODO: it just fetches replies, not replies to a specific tweet
         try{
             return determiner.search(q);
         } catch (TwitterException e){
