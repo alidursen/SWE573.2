@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import twitter4j.*;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class ThreadController {
     private VisualizerService visualizer;
 
     private Twitter determiner;
-    private Status initializer;
+    //private Status initializer;
     private int[] POPULARITY_COEFFICIENTS = {2, 1};
     private int POPULARITY_CONSTRAINT = 60;
     private InitializerPackage initPack;
@@ -33,51 +34,20 @@ public class ThreadController {
         model.addAttribute("appName", "TwiTree");
         return "home";
     }
-/*
-    @GetMapping(value = "/hello")
-    public String hello(final Model model){
-        return "hello";
-    }
-*/
-/*
-    @GetMapping(path = "/")
-    public String isThread(final Model model, HttpServletRequest request) {
-        initializer = obtainTweetFromInput(request.getQueryString());
 
-        if (determineNature(initializer) == TweetNature.THREAD) {
-            //ask for confirmation
-            //if user chooses DISCUSSION over THREAD
-            initPack = new InitializerPackage(initializer, TweetNature.DISCUSSION, determinePopularity(initializer));
-        }
-        initPack = new InitializerPackage(initializer, determineNature(initializer), determinePopularity(initializer));
-
-        visualizer.ShowDiscussion(initPack);
-
-        //set pop-up to open
-        return "home";
-    }
-*/
-/*
-    //read popup
-    @PostMapping("/")
-    public String confirmThread(final Model model){
-        if(Decision == Thread){
-            return "/thread";
-        }
-        else{
-            return "/discussion";
+    @PostMapping(value = "/")
+    public String getHeader(final Model model, @ModelAttribute("form") String tweetId,
+                            @RequestParam(value="pressed", required=true) String action) {
+        Status initializer = obtainTweetFromInput(tweetId);
+        model.addAttribute("initializer", initializer);
+        switch (action){
+            case "THREAD": return "thread";
+            case "DISCUSSION": return "discussion";
+            default: return "home";
         }
     }
-*/
 
-    @PostMapping(value = "/header")
-    public String getHeader(final Model model, @ModelAttribute("form") String tweetId) {
-        initializer = obtainTweetFromInput(tweetId);
-        //pop-up
-        return "/popup";
-    }
-
-    //I'M BEGRUDGINGLY MAKING METHODS BELOW PUBLIC, BECAUSE APPARENTLY WE CANNOT TEST PROVATE METHODS. (!)
+    //I'M BEGRUDGINGLY MAKING METHODS BELOW PUBLIC, BECAUSE APPARENTLY WE CANNOT TEST PRIVATE METHODS. (!)
     public Status obtainTweetFromInput(String s) {
         if (s.contains("/")) {
             if (s.endsWith("/")) s = s.substring(0, s.length() - 1);

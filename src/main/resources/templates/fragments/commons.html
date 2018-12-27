@@ -6,14 +6,14 @@
 </head>
 <body>
 <div th:fragment="header">
-    <form class="form-horizontal" role="form" method="POST" action="/header">
-        <input type="text" name="tweetId" value="Enter Tweet ID or URL">
-        <input type="submit" value="THREAD" name="thread">
-        <input type="submit" value="DISCUSSION" name="discuss">
+    <form class="form-horizontal" role="form" method="POST" action="#" th:action="@{/}">
+        <p>Enter Tweet ID or URL: <input type="text" name="tweetId">
+        <input type="submit" value="THREAD" name="pressed">
+        <input type="submit" value="DISCUSSION" name="pressed"></p>
     </form>
 </div>
 
-<div th:fragment="popup">
+<div th:fragment="tweet">
 
 </div>
 
