@@ -6,9 +6,10 @@
 </head>
 <body>
 <div th:fragment="header">
-    <form class="form-horizontal" role="form" method="GET" action="/header">
+    <form class="form-horizontal" role="form" method="POST" action="/header">
         <input type="text" name="tweetId" value="Enter Tweet ID or URL">
-        <input type="submit" value="Enter">
+        <input type="submit" value="THREAD" name="thread">
+        <input type="submit" value="DISCUSSION" name="discuss">
     </form>
 </div>
 
