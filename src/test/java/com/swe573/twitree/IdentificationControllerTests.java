@@ -1,3 +1,4 @@
+/*
 package com.swe573.twitree;
 
 import com.swe573.twitree.controller.IdentificationController;
@@ -53,7 +54,10 @@ public class IdentificationControllerTests {
     public void inputIsTweetId(){
         assertEquals(tester.obtainTweetFromInput(POPULAR_ID).getId(), 1045749005857128448L);
     }
-    /* Turns out, you don't test exceptions if they are caught.   *//*
+    */
+/* Turns out, you don't test exceptions if they are caught.   *//*
+*/
+/*
     @Test(expected = TwitterException.class)
     public void inputIsDeletedAddress(){
         tester.obtainTweetFromInput(DELETED_URL);
@@ -61,7 +65,8 @@ public class IdentificationControllerTests {
     @Test(expected = TwitterException.class)
     public void inputIsDeletedId(){
         tester.obtainTweetFromInput(DELETED_ID);
-    }                                                               */
+    }                                                               *//*
+
 
 
     @Test
@@ -84,3 +89,4 @@ public class IdentificationControllerTests {
 
 
 }
+*/

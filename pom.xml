@@ -10,7 +10,7 @@
     </parent>
     <packaging>war</packaging>
     <groupId>com.swe573</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>twitree</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>twitree</name>
     <description>descr</description>
