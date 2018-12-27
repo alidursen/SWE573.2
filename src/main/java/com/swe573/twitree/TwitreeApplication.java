@@ -9,4 +9,6 @@ public class TwitreeApplication {
     public static void main(String[] args) {
         SpringApplication.run(TwitreeApplication.class, args);
     }
+
 }
+

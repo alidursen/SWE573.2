@@ -1,4 +1,4 @@
-package com.swe573.demo;
+package com.swe573.twitree;
 
 import org.springframework.stereotype.Service;
 import twitter4j.*;
