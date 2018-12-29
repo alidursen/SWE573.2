@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
 <head th:fragment="head">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:include=":: #pageTitle">TWITREE</title>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
 </head>
+
 <body>
 <div th:fragment="header">
     <form class="form-horizontal" role="form" method="POST" action="#" th:action="@{/}">
@@ -13,7 +19,7 @@
     </form>
 </div>
 
-<div th:fragment="tweet">
+<div th:fragment="tweet" th:object="">
 
 </div>
 

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import twitter4j.*;
 
 import java.util.List;
@@ -16,10 +17,8 @@ public class ThreadController {
     private VisualizerService visualizer;
 
     private Twitter determiner;
-    //private Status initializer;
     private int[] POPULARITY_COEFFICIENTS = {2, 1};
     private int POPULARITY_CONSTRAINT = 60;
-    private InitializerPackage initPack;
 
     //private Logger logger = Logger.getAnonymousLogger();
 
@@ -36,14 +35,41 @@ public class ThreadController {
     }
 
     @PostMapping(value = "/")
-    public String getHeader(final Model model, @ModelAttribute("form") String tweetId,
+    public ModelAndView getHeader(final Model model, @ModelAttribute("tweetId") String tweetId,
                             @RequestParam(value="pressed", required=true) String action) {
         Status initializer = obtainTweetFromInput(tweetId);
-        model.addAttribute("initializer", initializer);
+        ModelAndView displayView;
+        InitializerPackage init;
         switch (action){
-            case "THREAD": return "thread";
-            case "DISCUSSION": return "discussion";
-            default: return "home";
+            case "THREAD":
+                displayView = new ModelAndView("thread");
+                init = new InitializerPackage(initializer, TweetNature.THREAD, determinePopularity(initializer));
+                break;
+            case "DISCUSSION":
+                displayView = new ModelAndView("discussion");
+                init = new InitializerPackage(initializer, TweetNature.DISCUSSION, determinePopularity(initializer));
+                break;
+            default: return new ModelAndView("home");
+        }
+        displayView.addObject("initializerPack", init);
+        displayView.addObject("firstDisplay", visualizer.ShowDiscussion(init));
+        return displayView;
+    }
+
+    @PostMapping(value = "/replies")
+    public JSONArray getReplies(long id){
+        Status tweet1;
+        try {
+            tweet1 = determiner.showStatus(id);
+            List<Status> l = visualizer.GetReplies(tweet1, determinePopularity(tweet1));
+            JSONArray returnee = new JSONArray();
+            for (Status status: l) {
+                returnee.put(TwitterObjectFactory.getRawJSON(status));
+            }
+            return returnee;
+        } catch (TwitterException e) {
+            //logger.log(Level.SEVERE, "Error at getting Tweet", e);
+            return null;
         }
     }
 
@@ -97,6 +123,7 @@ public class ThreadController {
      * <p>
      * METHOD UPDATE: we have access to Search functionalities, which CAN search by author and replyto.
      */
+    //determineNature is never used: we're assigning the responsibility to the user.
     public TweetNature determineNature(Status tw) {
         long tweetID = tw.getId();
         Query q = new Query("from:" + tw.getUser().getScreenName() + " to:" + tw.getUser().getScreenName());
