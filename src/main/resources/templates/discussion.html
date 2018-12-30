@@ -4,9 +4,12 @@
     <title id="pageTitle">Discussion</title>
 </head>
 <body>
-    <th:block th:include="fragments/commons :: header" />
-
-<div th:text="${firstDisplay.get(0).getText()}"></div>
-
+<th:block th:include="fragments/commons :: header" />
+<div th:onclick="'getReplies(1,\'' + ${(initializerPack.initializer().getId())} + '\')'"
+     th:class="'0 unclicked ' +${initializerPack.initializer().getId()}">
+    <p><span th:text="${initializerPack.initializer().getText()}">Tweet body</span><br>
+    <a th:href="'https://www.twitter.com/statuses/'+${initializerPack.initializer().getId()}"
+          th:text="${initializerPack.initializer().getCreatedAt()}"></a></p>
+</div>
 </body>
 </html>

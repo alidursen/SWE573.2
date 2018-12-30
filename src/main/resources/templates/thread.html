@@ -4,8 +4,8 @@
     <title id="pageTitle">Thread</title>
 </head>
 <body>
-    <th:block th:include="fragments/commons :: header" />
+<th:block th:include="fragments/commons :: header" />
 <button type="button" th:onclick="'getReplies(1,\'' + ${(initializerPack.initializer().getId())} + '\')'">Try it</button>
-<div class="deneme"></div>
+<div th:class="${initializerPack.initializer().getId()}"><p>Hi there!</p></div>
 </body>
 </html>

@@ -63,8 +63,9 @@ public class ThreadController {
             List<Status> l = visualizer.GetReplies(tweet1, determinePopularity(tweet1));
             String returnee = new String("[");
             for (Status status: l) {
-                returnee = returnee.concat(TwitterObjectFactory.getRawJSON(status));
+                returnee = returnee.concat(TwitterObjectFactory.getRawJSON(status)).concat(",");
             }
+            if(l.size()>0) returnee = returnee.substring(0,returnee.length()-1);
             returnee = returnee.concat("]");
             return returnee;
         } catch (TwitterException e) {
