@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
-<head th:replace="fragments/commons :: head" />
+<head th:include="fragments/commons :: head">
+    <title id="pageTitle">Thread</title>
+</head>
 <body>
-    <th:block th:include="fragments/commons :: header" />
-    <p th:text="'Displaying the thread: '" />
+<th:block th:include="fragments/commons :: header" />
+<button type="button" th:onclick="'getReplies(1,\'' + ${(initializerPack.initializer().getId())} + '\')'">Try it</button>
+<div th:class="${initializerPack.initializer().getId()}"><p>Hi there!</p></div>
 </body>
 </html>

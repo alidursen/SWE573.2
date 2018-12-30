@@ -76,8 +76,8 @@ public class VisualizerService {
         List<Status> returnee = new ArrayList<Status>();
         q.setSinceId(tweet.getId());
         q.setCount(100);
-        if (popularity) q.setResultType(Query.ResultType.popular);
-        else q.setResultType(Query.ResultType.recent);
+        /*if (popularity) q.setResultType(Query.ResultType.popular);
+        else */q.setResultType(Query.ResultType.recent);
 
         do {
             try {
