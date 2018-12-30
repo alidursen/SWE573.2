@@ -57,7 +57,7 @@ public class ThreadControllerTests {
 
     @Test
     public void toJSONArray(){
-        JSONArray returnee = tester.getReplies(FRESH.getId());
+        String returnee = tester.getReplies(String.valueOf(FRESH.getId()));
         assertEquals(1,1);
         //This test currently as useful as a bugging tool, do not use for proper testing.
     }

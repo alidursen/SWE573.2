@@ -3,10 +3,7 @@ package com.swe573.twitree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import twitter4j.*;
 
@@ -57,15 +54,18 @@ public class ThreadController {
     }
 
     @PostMapping(value = "/replies")
-    public JSONArray getReplies(long id){
+    @ResponseBody
+    public String getReplies(@RequestParam("id") String idStr){
+        long id = Long.parseLong(idStr);
         Status tweet1;
         try {
             tweet1 = determiner.showStatus(id);
             List<Status> l = visualizer.GetReplies(tweet1, determinePopularity(tweet1));
-            JSONArray returnee = new JSONArray();
+            String returnee = new String("[");
             for (Status status: l) {
-                returnee.put(TwitterObjectFactory.getRawJSON(status));
+                returnee = returnee.concat(TwitterObjectFactory.getRawJSON(status));
             }
+            returnee = returnee.concat("]");
             return returnee;
         } catch (TwitterException e) {
             //logger.log(Level.SEVERE, "Error at getting Tweet", e);
