@@ -2,10 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head th:include="fragments/commons :: head">
     <title id="pageTitle">Thread</title>
+    <link id="pageStyle" rel="stylesheet" th:href="@{/styles/thread.css}">
 </head>
 <body>
-<th:block th:include="fragments/commons :: header" />
-<button type="button" th:onclick="'getReplies(1,\'' + ${(initializerPack.initializer().getId())} + '\')'">Try it</button>
-<div th:class="${initializerPack.initializer().getId()}"><p>Hi there!</p></div>
+    <th:block th:include="fragments/commons :: header" />
+    <div class="chain">
+    <table>
+        <tr th:each="tweet: ${firstDisplay}" th:rowspan="2">
+            <td th:onclick="'getReplies(0,\'' + ${(initializerPack.initializer().getId())} + '\')'"><p>
+                <span th:text="${tweet.getText()}">Tweet text</span>
+            <br><a th:href="'https://www.twitter.com/statuses/'+${tweet.getId()}" th:text="${tweet.getCreatedAt()}"></a> </p></td>
+        </tr>
+    </table>
+    </div>
+    <div class="replies">
+        <table>
+            <tr th:each="tweet: ${firstDisplay}">
+                <td th:class="'unclicked '+ ${tweet.getId()}"></td>
+            </tr>
+        </table>
+    </div>
+    <!--<button type="button" th:onclick="'getReplies(1,\'' + ${(initializerPack.initializer().getId())} + '\')'">Try it</button>-->
+    <!--<div th:class="${initializerPack.initializer().getId()}"><p>Hi there!</p></div>-->
 </body>
 </html>

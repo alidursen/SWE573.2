@@ -13,7 +13,7 @@ function getReplies(level, id) {
                 $("."+id).append("<div onclick='getReplies("
                     + (level+1) +", &#39;"
                     + i.id_str + "&#39;)' class= '"
-                    + (level+1) + " unclicked "
+                    + level + " unclicked "
                     + i.id_str +"'><p>"
                     + i.full_text + "<br><a href='https://www.twitter.com/statuses/"
                     + i.id_str + "'>"
