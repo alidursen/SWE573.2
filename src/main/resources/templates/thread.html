@@ -9,7 +9,7 @@
     <div class="chain">
     <table>
         <tr th:each="tweet: ${firstDisplay}" th:rowspan="2">
-            <td th:onclick="'getReplies(0,\'' + ${(initializerPack.initializer().getId())} + '\')'"><p>
+            <td th:onclick="'getReplies(0,\'' + ${(tweet.getId())} + '\')'"><p>
                 <span th:text="${tweet.getText()}">Tweet text</span>
             <br><a th:href="'https://www.twitter.com/statuses/'+${tweet.getId()}" th:text="${tweet.getCreatedAt()}"></a> </p></td>
         </tr>
